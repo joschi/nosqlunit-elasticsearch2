@@ -68,7 +68,7 @@
         <maven.compiler.target>1.7</maven.compiler.target>
         <maven.site.deploy.skip>true</maven.site.deploy.skip>
         <nosqlunit.version>0.8.1</nosqlunit.version>
-        <elasticsearch.version>2.0.0</elasticsearch.version>
+        <elasticsearch.version>2.1.0</elasticsearch.version>
     </properties>
 
     <dependencies>
