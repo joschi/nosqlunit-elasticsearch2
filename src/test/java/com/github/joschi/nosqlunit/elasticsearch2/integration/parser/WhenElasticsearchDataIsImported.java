@@ -13,7 +13,6 @@ import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.util.Map;
 
-import static org.elasticsearch.node.NodeBuilder.nodeBuilder;
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
 
@@ -46,9 +45,12 @@ public class WhenElasticsearchDataIsImported {
     @Test
     public void data_should_be_indexed() throws IOException {
         final String pathHome = temporaryFolder.newFolder().getAbsolutePath();
-        final Settings settings = nodeBuilder().settings().put("path.home", pathHome).build();
+        final Settings settings = Settings.builder()
+                .put("path.home", pathHome)
+                .put("node.local", true)
+                .build();
 
-        try (final Node node = nodeBuilder().local(true).settings(settings).node();
+        try (final Node node = new Node(settings);
              final Client client = node.client()) {
             final DataReader dataReader = new DataReader(client);
             dataReader.read(new ByteArrayInputStream(ELASTICSEARCH_DATA.getBytes()));

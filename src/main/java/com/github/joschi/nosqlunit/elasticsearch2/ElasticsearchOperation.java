@@ -5,7 +5,6 @@ import com.lordofthejars.nosqlunit.core.AbstractCustomizableDatabaseOperation;
 import com.lordofthejars.nosqlunit.core.NoSqlAssertionError;
 import org.elasticsearch.action.bulk.BulkRequestBuilder;
 import org.elasticsearch.action.bulk.BulkResponse;
-import org.elasticsearch.action.count.CountResponse;
 import org.elasticsearch.action.search.SearchResponse;
 import org.elasticsearch.action.search.SearchType;
 import org.elasticsearch.client.Client;
@@ -62,7 +61,6 @@ public class ElasticsearchOperation extends
 
             int docCount = Ints.saturatedCast(countResponse.getHits().totalHits());
             final SearchResponse scrollResponse = client.prepareSearch()
-                    .setSearchType(SearchType.SCAN)
                     .setScroll(new TimeValue(1L, TimeUnit.MINUTES))
                     .setQuery(QueryBuilders.matchAllQuery())
                     .setSize(docCount)
@@ -96,8 +94,7 @@ public class ElasticsearchOperation extends
     }
 
     private boolean isAnyIndexPresent() {
-        CountResponse numberOfElements = client.prepareCount().execute().actionGet();
-        return numberOfElements.getCount() > 0;
+        return !client.admin().indices().prepareStats().all().get().getIndices().isEmpty();
     }
 
     private void refreshNode() {

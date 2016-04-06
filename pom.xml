@@ -8,7 +8,7 @@
 
     <groupId>com.github.joschi.nosqlunit</groupId>
     <artifactId>nosqlunit-elasticsearch2</artifactId>
-    <version>0.9.0-1-SNAPSHOT</version>
+    <version>0.9.0-es5alpha-1-SNAPSHOT</version>
 
     <name>NoSQLUnit Elasticsearch 2.x</name>
     <description>Support for Elasticsearch 2.x in NoSQLUnit</description>
@@ -53,6 +53,14 @@
         </site>
     </distributionManagement>
 
+    <repositories>
+        <repository>
+            <id>lucene-snapshot</id>
+            <name>Lucene Snapshot repo</name>
+            <url>http://download.elastic.co/lucenesnapshots/f0aa4fc</url>
+        </repository>
+    </repositories>
+
     <developers>
         <developer>
             <id>j.schalanda</id>
@@ -68,7 +76,7 @@
         <maven.compiler.target>1.7</maven.compiler.target>
         <maven.site.deploy.skip>true</maven.site.deploy.skip>
         <nosqlunit.version>0.9.0</nosqlunit.version>
-        <elasticsearch.version>2.1.0</elasticsearch.version>
+        <elasticsearch.version>5.0.0-alpha1</elasticsearch.version>
     </properties>
 
     <dependencies>
@@ -85,7 +93,7 @@
         <dependency>
             <groupId>com.google.guava</groupId>
             <artifactId>guava</artifactId>
-            <version>18.0</version>
+            <version>19.0</version>
         </dependency>
         <dependency>
             <groupId>junit</groupId>

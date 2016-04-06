@@ -40,11 +40,6 @@ public class EmbeddedElasticsearch extends ExternalResource {
             return this;
         }
 
-        public EmbeddedElasticsearchRuleBuilder client(boolean client) {
-            this.elasticsearchLifecycleManager.setClient(client);
-            return this;
-        }
-
         public EmbeddedElasticsearchRuleBuilder settings(Settings settings) {
             this.elasticsearchLifecycleManager.setSettings(settings);
             return this;

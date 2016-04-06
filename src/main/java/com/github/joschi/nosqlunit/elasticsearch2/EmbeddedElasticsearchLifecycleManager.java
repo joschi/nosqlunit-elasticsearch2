@@ -4,13 +4,11 @@ import com.google.common.io.Files;
 import com.lordofthejars.nosqlunit.core.AbstractLifecycleManager;
 import org.elasticsearch.common.settings.Settings;
 import org.elasticsearch.node.Node;
-import org.elasticsearch.node.NodeBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.File;
-
-import static org.elasticsearch.node.NodeBuilder.nodeBuilder;
+import java.io.IOException;
 
 public class EmbeddedElasticsearchLifecycleManager extends AbstractLifecycleManager {
     private static final Logger LOGGER = LoggerFactory.getLogger(EmbeddedElasticsearchLifecycleManager.class);
@@ -24,12 +22,7 @@ public class EmbeddedElasticsearchLifecycleManager extends AbstractLifecycleMana
 
     private File homePath = EMBEDDED_ELASTICSEARCH_HOME_PATH;
     private File dataPath = EMBEDDED_ELASTICSEARCH_DATA_PATH;
-
-    private NodeBuilder nodeBuilder;
-
-    public EmbeddedElasticsearchLifecycleManager() {
-        nodeBuilder = nodeBuilder().local(true);
-    }
+    private Settings.Builder settingsBuilder = Settings.builder().put("node.local", true);
 
     @Override
     public String getHost() {
@@ -45,27 +38,30 @@ public class EmbeddedElasticsearchLifecycleManager extends AbstractLifecycleMana
     public void doStart() throws Throwable {
         LOGGER.info("Starting Embedded Elasticsearch instance.");
 
-        nodeBuilder.getSettings()
+        final Settings settings = settingsBuilder
                 .put(HOME_PATH_PROPERTY, homePath)
-                .put(DATA_PATH_PROPERTY, dataPath);
-        Node node = elasticsearchNode();
+                .put(DATA_PATH_PROPERTY, dataPath)
+                .build();
+
+        final Node node = elasticsearchNode(settings);
+        node.start();
         EmbeddedElasticsearchInstancesFactory.getInstance().addEmbeddedInstance(node, dataPath.getAbsolutePath());
 
         LOGGER.info("Started Embedded Elasticsearch instance.");
     }
 
-    private Node elasticsearchNode() {
-        return nodeBuilder.node();
+    private Node elasticsearchNode(Settings settings) {
+        return new Node(settings);
     }
 
     @Override
     public void doStop() {
         LOGGER.info("Stopping Embedded Elasticsearch instance.");
 
-        Node node = EmbeddedElasticsearchInstancesFactory.getInstance().getEmbeddedByTargetPath(dataPath.getAbsolutePath());
-
-        if (node != null) {
-            node.close();
+        try(final Node node = EmbeddedElasticsearchInstancesFactory.getInstance().getEmbeddedByTargetPath(dataPath.getAbsolutePath())) {
+            // NOP
+        } catch (IOException e) {
+            LOGGER.error("Couldn't properly stop Embedded Elasticsearch instance.", e);
         }
 
         EmbeddedElasticsearchInstancesFactory.getInstance().removeEmbeddedInstance(dataPath.getAbsolutePath());
@@ -74,23 +70,19 @@ public class EmbeddedElasticsearchLifecycleManager extends AbstractLifecycleMana
     }
 
     public void setSettings(Settings settings) {
-        nodeBuilder.settings(settings);
-    }
-
-    public void setClient(boolean client) {
-        nodeBuilder.client(client);
+        settingsBuilder.put(settings);
     }
 
     public void setClusterName(String clusterName) {
-        nodeBuilder.clusterName(clusterName);
+        settingsBuilder.put("cluster.name", clusterName);
     }
 
     public void setData(boolean data) {
-        nodeBuilder.data(data);
+        settingsBuilder.put("node.data", data);
     }
 
     public void setLocal(boolean local) {
-        nodeBuilder.local(local);
+        settingsBuilder.put("node.local", local);
     }
 
     public File getDataPath() {

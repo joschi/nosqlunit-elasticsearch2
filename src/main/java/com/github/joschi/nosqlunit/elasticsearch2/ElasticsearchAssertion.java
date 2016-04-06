@@ -4,10 +4,11 @@ import com.github.joschi.nosqlunit.elasticsearch2.parser.DataReader;
 import com.lordofthejars.nosqlunit.core.FailureHandler;
 import com.lordofthejars.nosqlunit.util.DeepEquals;
 import org.codehaus.jackson.map.ObjectMapper;
-import org.elasticsearch.action.count.CountResponse;
 import org.elasticsearch.action.get.GetRequestBuilder;
 import org.elasticsearch.action.get.GetResponse;
+import org.elasticsearch.action.search.SearchResponse;
 import org.elasticsearch.client.Client;
+import org.elasticsearch.search.builder.SearchSourceBuilder;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -130,7 +131,8 @@ public class ElasticsearchAssertion {
     }
 
     private static long numberOfInsertedDocuments(Client client) {
-        final CountResponse numberOfElements = client.prepareCount().execute().actionGet();
-        return numberOfElements.getCount();
+        final SearchResponse response = client.prepareSearch().setSource(new SearchSourceBuilder().size(0)).get();
+
+        return response.getHits().getTotalHits();
     }
 }
