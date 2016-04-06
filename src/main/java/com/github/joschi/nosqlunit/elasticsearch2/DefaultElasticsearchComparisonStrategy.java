@@ -17,4 +17,9 @@ public class DefaultElasticsearchComparisonStrategy implements ElasticsearchComp
         ElasticsearchAssertion.strictAssertEquals(documents, nodeClient);
         return true;
     }
+
+    @Override
+    public void setIgnoreProperties(String[] ignoreProperties) {
+        // NOP
+    }
 }
