@@ -8,7 +8,7 @@
 
     <groupId>com.github.joschi.nosqlunit</groupId>
     <artifactId>nosqlunit-elasticsearch2</artifactId>
-    <version>0.9.0-es5alpha-1</version>
+    <version>0.9.0-es5alpha-2-SNAPSHOT</version>
 
     <name>NoSQLUnit Elasticsearch 2.x</name>
     <description>Support for Elasticsearch 2.x in NoSQLUnit</description>
